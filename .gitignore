@@ -1,0 +1,286 @@
+# ============================================================
+# OmniLead AI
+# Root .gitignore
+# ============================================================
+
+# ------------------------------------------------------------
+# Environment variables and secrets
+# ------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ------------------------------------------------------------
+# Python
+# ------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+*.so
+*.dylib
+
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+backend/.venv/
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+pytestdebug.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# ------------------------------------------------------------
+# Node / React / Vite
+# ------------------------------------------------------------
+node_modules/
+frontend/node_modules/
+
+dist/
+frontend/dist/
+
+.vite/
+frontend/.vite/
+
+coverage/
+frontend/coverage/
+
+*.tsbuildinfo
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ------------------------------------------------------------
+# Playwright
+# ------------------------------------------------------------
+playwright-report/
+test-results/
+blob-report/
+frontend/playwright-report/
+frontend/test-results/
+tests/e2e/playwright-report/
+tests/e2e/test-results/
+
+# ------------------------------------------------------------
+# Supabase / PostgreSQL local artifacts
+# ------------------------------------------------------------
+.supabase/
+supabase/.temp/
+
+*.db
+*.sqlite
+*.sqlite3
+
+# PostgreSQL dumps
+*.sql.gz
+*.dump
+*.backup
+
+# ------------------------------------------------------------
+# Redis
+# ------------------------------------------------------------
+dump.rdb
+
+# ------------------------------------------------------------
+# AI / ML artifacts
+# ------------------------------------------------------------
+*.onnx
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+models/
+model-cache/
+
+# Hugging Face cache
+.huggingface/
+hf-cache/
+
+# Sentence Transformers / Transformers caches
+.cache/huggingface/
+.cache/torch/
+.cache/transformers/
+
+# ------------------------------------------------------------
+# Audio / transcription generated artifacts
+# ------------------------------------------------------------
+uploads/
+backend/uploads/
+
+*.wav
+*.mp3
+*.m4a
+*.flac
+*.ogg
+*.webm
+
+# Keep explicitly committed synthetic demo files
+!demo/audio/**
+!demo/audio/.gitkeep
+
+# ------------------------------------------------------------
+# Evaluation generated results
+# ------------------------------------------------------------
+evaluation/results/*
+!evaluation/results/.gitkeep
+
+# ------------------------------------------------------------
+# Logs
+# ------------------------------------------------------------
+*.log
+logs/
+backend/logs/
+
+# ------------------------------------------------------------
+# Temporary files
+# ------------------------------------------------------------
+tmp/
+temp/
+.cache/
+
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ------------------------------------------------------------
+# macOS
+# ------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+
+Icon?
+
+._*
+
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# ------------------------------------------------------------
+# Windows
+# ------------------------------------------------------------
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+*.stackdump
+
+[Dd]esktop.ini
+
+$RECYCLE.BIN/
+
+# ------------------------------------------------------------
+# Linux
+# ------------------------------------------------------------
+.directory
+
+# ------------------------------------------------------------
+# IDEs / editors
+# ------------------------------------------------------------
+.vscode/
+.idea/
+
+*.code-workspace
+
+# Allow shared VS Code recommendations/settings later if explicitly added
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ------------------------------------------------------------
+# Docker
+# ------------------------------------------------------------
+.docker/
+
+# ------------------------------------------------------------
+# Vercel
+# ------------------------------------------------------------
+.vercel/
+frontend/.vercel/
+
+# ------------------------------------------------------------
+# Render / deployment local files
+# ------------------------------------------------------------
+.render/
+
+# ------------------------------------------------------------
+# Local SSL / certificates
+# ------------------------------------------------------------
+certs/
+
+# ------------------------------------------------------------
+# Generated documentation
+# ------------------------------------------------------------
+site/
+
+# ------------------------------------------------------------
+# Miscellaneous
+# ------------------------------------------------------------
+*.bak
+*.orig
+*.rej
+
+# Local developer notes
+notes.local.*
+TODO.local.*
