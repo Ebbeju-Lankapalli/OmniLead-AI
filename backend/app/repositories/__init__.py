@@ -1,8 +1,8 @@
 """Repository exports for OmniLead AI data-access operations."""
 
 from app.repositories.ai_analyses import (
-    AIFeedbackRepository,
     AIAnalysisRepository,
+    AIFeedbackRepository,
 )
 from app.repositories.base import BaseRepository
 from app.repositories.conversations import ConversationRepository
