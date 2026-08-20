@@ -8,7 +8,7 @@ from uuid import UUID
 
 from pydantic import Field, field_validator
 
-from app.db.types import EnquiryStatus, LeadSource
+from app.db.types import EnquiryStatus, LeadSource, PurchaseIntent
 from app.schemas.common import ORMModel, TimestampedSchema
 
 
@@ -155,3 +155,69 @@ class EnquiryLinkUpdate(ORMModel):
     customer_id: UUID | None = None
     conversation_id: UUID | None = None
     interaction_id: UUID | None = None
+
+
+class EnquiryCreateRequest(EnquiryBase):
+    """Create an enquiry inside the authenticated organization."""
+
+    customer_id: UUID | None = None
+    conversation_id: UUID | None = None
+    interaction_id: UUID | None = None
+
+
+class EnquiryConvertRequest(ORMModel):
+    """Convert a linked enquiry into a lead."""
+
+    status_id: UUID
+    product_id: UUID | None = None
+    assigned_to_user_id: UUID | None = None
+
+    source: LeadSource
+    original_source: LeadSource | None = None
+
+    campaign_id: str | None = Field(
+        default=None,
+        max_length=255,
+    )
+    ad_id: str | None = Field(
+        default=None,
+        max_length=255,
+    )
+
+    requirement: str | None = None
+    original_enquiry: str | None = None
+
+    purchase_intent: PurchaseIntent | None = None
+
+    lead_score: int | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+    )
+    priority_score: int | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+    )
+    followup_risk_score: int | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+    )
+
+    score_breakdown: dict[str, Any] = Field(
+        default_factory=dict,
+    )
+
+    qualification_summary: str | None = None
+    conversation_summary: str | None = None
+
+    next_best_action: str | None = Field(
+        default=None,
+        max_length=50,
+    )
+    next_best_action_reason: str | None = None
+
+    tags: list[str] = Field(
+        default_factory=list,
+    )

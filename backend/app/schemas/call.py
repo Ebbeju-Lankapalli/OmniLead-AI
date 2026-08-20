@@ -250,3 +250,37 @@ class CallTranscriptionFailure(ORMModel):
             raise ValueError("Transcription error cannot be empty.")
 
         return cleaned
+
+
+class CallIntelligenceResponse(ORMModel):
+    """AI intelligence returned after processing a call recording."""
+
+    analysis_id: UUID
+
+    summary: str
+    purchase_intent: str | None = None
+    sentiment: str | None = None
+    requirement: str | None = None
+
+    objections: list[str] = Field(default_factory=list)
+    commitments: list[str] = Field(default_factory=list)
+    action_items: list[str] = Field(default_factory=list)
+    customer_questions: list[str] = Field(default_factory=list)
+    key_moments: list[str] = Field(default_factory=list)
+
+    confidence: float = Field(ge=0.0, le=1.0)
+    requires_review: bool = False
+
+
+class CallUploadProcessingResponse(ORMModel):
+    """Response returned after upload, transcription, and AI analysis."""
+
+    call_recording_id: UUID
+    storage_path: str
+
+    transcription_status: TranscriptionStatus
+    transcript: str
+    transcript_language: str | None = None
+    duration_seconds: int | None = Field(default=None, ge=0)
+
+    intelligence: CallIntelligenceResponse

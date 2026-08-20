@@ -18,21 +18,52 @@ class LoginRequest(ORMModel):
 
 
 class RegisterRequest(ORMModel):
-    """User registration request."""
+    """Register the first administrator of a new organization."""
 
     email: EmailStr
     password: str = Field(min_length=8, max_length=128)
-    full_name: str = Field(min_length=2, max_length=150)
 
-    @field_validator("full_name")
+    full_name: str = Field(
+        min_length=2,
+        max_length=150,
+    )
+
+    organization_name: str = Field(
+        min_length=2,
+        max_length=150,
+    )
+
+    organization_slug: str = Field(
+        min_length=2,
+        max_length=100,
+        pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
+    )
+
+    @field_validator(
+        "full_name",
+        "organization_name",
+    )
     @classmethod
-    def validate_full_name(cls, value: str) -> str:
+    def normalize_names(
+        cls,
+        value: str,
+    ) -> str:
         cleaned = " ".join(value.split())
 
         if len(cleaned) < 2:
-            raise ValueError("Full name must contain at least 2 characters.")
+            raise ValueError(
+                "Name must contain at least 2 characters."
+            )
 
         return cleaned
+
+    @field_validator("organization_slug")
+    @classmethod
+    def normalize_organization_slug(
+        cls,
+        value: str,
+    ) -> str:
+        return value.strip().lower()
 
 
 class AuthTokenResponse(ORMModel):
@@ -61,6 +92,7 @@ class AuthSessionResponse(ORMModel):
 
     user: AuthenticatedUser
     access_token: str | None = None
+    refresh_token: str | None = None
     token_type: str = "bearer"
     expires_in: int | None = Field(default=None, ge=0)
 

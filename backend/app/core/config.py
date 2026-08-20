@@ -93,9 +93,7 @@ class Settings(BaseSettings):
     # Embeddings
     # ------------------------------------------------------------------
 
-    EMBEDDING_PROVIDER: Literal["sentence_transformers", "gemini"] = (
-        "sentence_transformers"
-    )
+    EMBEDDING_PROVIDER: Literal["sentence_transformers", "gemini"] = "sentence_transformers"
     SENTENCE_TRANSFORMER_MODEL: str = ""
 
     SEMANTIC_SEARCH_ENABLED: bool = False
@@ -129,6 +127,7 @@ class Settings(BaseSettings):
     META_APP_ID: str = ""
     META_APP_SECRET: str = ""
     META_VERIFY_TOKEN: str = ""
+    META_ORGANIZATION_ID: str = ""
 
     META_GRAPH_API_VERSION: str = ""
 
@@ -164,6 +163,14 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------------
 
     CORS_ALLOWED_ORIGINS: tuple[str, ...] = ("http://localhost:5173",)
+
+    TRUSTED_HOSTS: tuple[str, ...] = (
+        "localhost",
+        "127.0.0.1",
+        "testserver",
+        "*.onrender.com",
+        "*.railway.app",
+    )
 
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_REQUESTS: int = Field(
@@ -225,11 +232,7 @@ class Settings(BaseSettings):
         if not isinstance(value, str):
             return value
 
-        items = tuple(
-            item.strip()
-            for item in value.split(",")
-            if item.strip()
-        )
+        items = tuple(item.strip() for item in value.split(",") if item.strip())
 
         return items
 
@@ -241,14 +244,7 @@ class Settings(BaseSettings):
     ) -> tuple[str, ...]:
         """Normalize configured audio file extensions."""
 
-        return tuple(
-            sorted(
-                {
-                    extension.lower().lstrip(".")
-                    for extension in value
-                }
-            )
-        )
+        return tuple(sorted({extension.lower().lstrip(".") for extension in value}))
 
     # ------------------------------------------------------------------
     # Environment helpers
@@ -290,11 +286,7 @@ class Settings(BaseSettings):
                 "SUPABASE_SERVICE_ROLE_KEY": self.SUPABASE_SERVICE_ROLE_KEY,
             }
 
-            missing.extend(
-                name
-                for name, value in required_production_values.items()
-                if not value
-            )
+            missing.extend(name for name, value in required_production_values.items() if not value)
 
         if self.AI_ENABLED and self.is_production:
             if not self.GEMINI_API_KEY:
@@ -314,20 +306,16 @@ class Settings(BaseSettings):
             meta_required_values = {
                 "META_APP_SECRET": self.META_APP_SECRET,
                 "META_VERIFY_TOKEN": self.META_VERIFY_TOKEN,
+                "META_ORGANIZATION_ID": self.META_ORGANIZATION_ID,
             }
 
-            missing.extend(
-                name
-                for name, value in meta_required_values.items()
-                if not value
-            )
+            missing.extend(name for name, value in meta_required_values.items() if not value)
 
         if missing:
             unique_missing = sorted(set(missing))
 
             raise RuntimeError(
-                "Missing required OmniLead AI configuration: "
-                + ", ".join(unique_missing)
+                "Missing required OmniLead AI configuration: " + ", ".join(unique_missing)
             )
 
 

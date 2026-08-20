@@ -120,6 +120,44 @@ class NotificationRepository(BaseRepository[Notification]):
 
         return int(self.db.scalar(statement) or 0)
 
+    def count_total(
+        self,
+        organization_id: UUID,
+        user_id: UUID,
+    ) -> int:
+        """Return total notification count for one user."""
+
+        statement = (
+            select(func.count())
+            .select_from(Notification)
+            .where(
+                Notification.organization_id == organization_id,
+                Notification.user_id == user_id,
+            )
+        )
+
+        return int(self.db.scalar(statement) or 0)
+
+    def count_pending(
+        self,
+        organization_id: UUID,
+        user_id: UUID,
+    ) -> int:
+        """Return pending notification count for one user."""
+
+        statement = (
+            select(func.count())
+            .select_from(Notification)
+            .where(
+                Notification.organization_id == organization_id,
+                Notification.user_id == user_id,
+                Notification.status
+                == NotificationStatus.PENDING.value,
+            )
+        )
+
+        return int(self.db.scalar(statement) or 0)
+
     def list_pending_delivery(
         self,
         *,

@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python cache / compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Test / lint / coverage artifacts
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Local logs / runtime files
+*.log
+*.pid
+
+# Local uploaded/test media
+test_sales_call.aiff
+uploads/
+tmp/
+temp/
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Documentation / repository-only files
+README.md

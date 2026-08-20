@@ -154,3 +154,75 @@ class InteractionEmbeddingUpdate(ORMModel):
             raise ValueError("Embedding model cannot be empty.")
 
         return cleaned
+
+
+class InteractionCreateRequest(ORMModel):
+    """Create an authenticated CRM interaction."""
+
+    customer_id: UUID
+    lead_id: UUID | None = None
+    conversation_id: UUID | None = None
+
+    interaction_type: InteractionType
+    direction: InteractionDirection | None = None
+    channel: ConversationChannel
+
+    content: str | None = None
+
+    external_message_id: str | None = Field(
+        default=None,
+        max_length=255,
+    )
+
+    occurred_at: datetime | None = None
+
+    interaction_metadata: dict[str, Any] = Field(
+        default_factory=dict,
+    )
+
+    @field_validator("content")
+    @classmethod
+    def normalize_create_content(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned = value.strip()
+        return cleaned or None
+
+    @field_validator("external_message_id")
+    @classmethod
+    def normalize_create_external_message_id(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned = value.strip()
+        return cleaned or None
+
+
+class InteractionPatchRequest(ORMModel):
+    """Safely update mutable CRM interaction fields."""
+
+    lead_id: UUID | None = None
+    conversation_id: UUID | None = None
+
+    content: str | None = None
+
+    interaction_metadata: dict[str, Any] | None = None
+
+    @field_validator("content")
+    @classmethod
+    def normalize_patch_content(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned = value.strip()
+        return cleaned or None

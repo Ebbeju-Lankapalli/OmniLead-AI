@@ -144,3 +144,9 @@ class CustomerSummary(ORMModel):
     customer_type: str | None = None
     last_seen_at: datetime
     archived_at: datetime | None = None
+
+
+class CustomerCreateRequest(CustomerBase):
+    """Create a customer inside the authenticated organization."""
+
+    pass

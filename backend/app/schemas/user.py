@@ -140,3 +140,33 @@ class UserActivityUpdate(ORMModel):
     """Internal payload for updating user activity state."""
 
     last_active_at: datetime
+
+
+class TeamMemberUpdate(ORMModel):
+    """Admin-safe team member access update."""
+
+    full_name: str | None = Field(
+        default=None,
+        min_length=2,
+        max_length=150,
+    )
+    role: UserRole | None = None
+    is_active: bool | None = None
+
+    @field_validator("full_name")
+    @classmethod
+    def normalize_team_member_name(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned = " ".join(value.split())
+
+        if len(cleaned) < 2:
+            raise ValueError(
+                "Full name must contain at least 2 characters."
+            )
+
+        return cleaned

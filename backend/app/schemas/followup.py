@@ -165,3 +165,60 @@ class FollowUpAssignmentUpdate(ORMModel):
     """Reassign a follow-up to another team member."""
 
     assigned_to_user_id: UUID
+
+
+class FollowUpCreateRequest(ORMModel):
+    """Create a follow-up inside the authenticated organization."""
+
+    lead_id: UUID
+    customer_id: UUID
+    assigned_to_user_id: UUID
+
+    followup_type: FollowUpType
+    scheduled_at: datetime
+
+    reminder_minutes_before: int = Field(
+        default=DEFAULT_FOLLOWUP_REMINDER_MINUTES,
+        ge=0,
+        le=10080,
+    )
+
+    notes: str | None = None
+
+    @field_validator("notes")
+    @classmethod
+    def normalize_create_notes(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned = value.strip()
+        return cleaned or None
+
+
+class FollowUpPatchRequest(ORMModel):
+    """Safely update mutable scheduled follow-up fields."""
+
+    assigned_to_user_id: UUID | None = None
+    followup_type: FollowUpType | None = None
+    scheduled_at: datetime | None = None
+    reminder_minutes_before: int | None = Field(
+        default=None,
+        ge=0,
+        le=10080,
+    )
+    notes: str | None = None
+
+    @field_validator("notes")
+    @classmethod
+    def normalize_patch_notes(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned = value.strip()
+        return cleaned or None

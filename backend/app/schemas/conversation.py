@@ -139,3 +139,74 @@ class ConversationCloseUpdate(ORMModel):
     """Close or reopen a conversation."""
 
     closed_at: datetime | None = None
+
+
+class ConversationCreateRequest(ORMModel):
+    """Create a conversation inside the authenticated organization."""
+
+    customer_id: UUID
+    lead_id: UUID | None = None
+
+    channel: ConversationChannel
+
+    external_conversation_id: str | None = Field(
+        default=None,
+        max_length=255,
+    )
+    title: str | None = Field(
+        default=None,
+        max_length=255,
+    )
+    started_at: datetime | None = None
+
+    conversation_metadata: dict[str, Any] = Field(
+        default_factory=dict,
+    )
+
+    @field_validator(
+        "external_conversation_id",
+        "title",
+    )
+    @classmethod
+    def normalize_create_text(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned = " ".join(value.split())
+        return cleaned or None
+
+
+class ConversationPatchRequest(ORMModel):
+    """Safely update user-editable conversation fields."""
+
+    lead_id: UUID | None = None
+
+    external_conversation_id: str | None = Field(
+        default=None,
+        max_length=255,
+    )
+
+    title: str | None = Field(
+        default=None,
+        max_length=255,
+    )
+
+    conversation_metadata: dict[str, Any] | None = None
+
+    @field_validator(
+        "external_conversation_id",
+        "title",
+    )
+    @classmethod
+    def normalize_patch_text(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned = " ".join(value.split())
+        return cleaned or None

@@ -191,3 +191,9 @@ class ProductSummary(ORMModel):
     price: Decimal | None = None
     currency: str | None = None
     is_active: bool
+
+
+class ProductCreateRequest(ProductBase):
+    """Create a product inside the authenticated organization."""
+
+    pass

@@ -284,3 +284,6 @@ site/
 # Local developer notes
 notes.local.*
 TODO.local.*
+
+# Local backend test media
+backend/test_sales_call.aiff
