@@ -81,7 +81,7 @@ frontend-test:
 	cd $(FRONTEND_DIR) && npm run test
 
 e2e-test:
-	cd $(FRONTEND_DIR) && npx playwright test
+	npx playwright test
 
 lint: backend-lint frontend-lint
 

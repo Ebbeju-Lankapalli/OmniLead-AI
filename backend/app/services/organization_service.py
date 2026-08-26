@@ -12,6 +12,7 @@ from app.core.exceptions import ConflictError, NotFoundError
 from app.models.organization import Organization
 from app.repositories.organizations import OrganizationRepository
 from app.schemas.organization import OrganizationCreate, OrganizationUpdate
+from app.services.lead_status_service import LeadStatusService
 
 
 class OrganizationService:
@@ -99,6 +100,9 @@ class OrganizationService:
 
         try:
             self.organizations.add(organization)
+            LeadStatusService(self.db).provision_defaults(
+                organization.id
+            )
             self.db.commit()
         except IntegrityError as exc:
             self.db.rollback()

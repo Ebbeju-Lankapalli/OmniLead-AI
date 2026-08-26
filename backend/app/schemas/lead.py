@@ -6,10 +6,13 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from pydantic import Field, field_validator
+from pydantic import AliasChoices, Field, field_validator
 
 from app.db.types import LeadSource, PurchaseIntent
 from app.schemas.common import ORMModel, TimestampedSchema
+from app.schemas.customer import CustomerResponse
+from app.schemas.product import ProductResponse
+from app.schemas.user import UserResponse
 
 
 class LeadBase(ORMModel):
@@ -205,6 +208,32 @@ class LeadResponse(LeadBase, TimestampedSchema):
     product_id: UUID | None = None
     status_id: UUID
     assigned_to_user_id: UUID | None = None
+
+    customer: CustomerResponse
+    product: ProductResponse | None = None
+    status: "LeadStatusResponse"
+    assigned_user: UserResponse | None = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            "assigned_user",
+            "assignee",
+        ),
+    )
+
+
+class LeadStatusResponse(TimestampedSchema):
+    """Organization-scoped lead lifecycle status."""
+
+    id: UUID
+    organization_id: UUID
+    name: str
+    key: str
+    description: str | None = None
+    display_order: int
+    is_terminal: bool
+    is_won: bool
+    is_lost: bool
+    is_active: bool
 
 
 class LeadSummary(ORMModel):

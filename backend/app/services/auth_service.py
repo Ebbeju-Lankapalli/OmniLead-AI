@@ -28,6 +28,7 @@ from app.schemas.auth import (
     RefreshTokenRequest,
     RegisterRequest,
 )
+from app.services.lead_status_service import LeadStatusService
 
 
 class AuthService:
@@ -131,6 +132,10 @@ class AuthService:
 
             self.db.add(organization)
             self.db.flush()
+
+            LeadStatusService(self.db).provision_defaults(
+                organization.id
+            )
 
             user = User(
                 organization_id=organization.id,

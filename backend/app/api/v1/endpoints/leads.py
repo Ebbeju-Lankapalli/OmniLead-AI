@@ -13,10 +13,12 @@ from app.schemas.lead import (
     LeadCreate,
     LeadCreateRequest,
     LeadResponse,
+    LeadStatusResponse,
     LeadStatusUpdate,
     LeadUpdate,
 )
 from app.services.lead_service import LeadService
+from app.services.lead_status_service import LeadStatusService
 
 router = APIRouter(
     prefix="/leads",
@@ -126,6 +128,28 @@ def create_lead(
     return LeadResponse.model_validate(
         lead
     )
+
+
+@router.get(
+    "/statuses",
+    response_model=list[LeadStatusResponse],
+)
+def list_lead_statuses(
+    current_user: CurrentUser,
+    db: DatabaseSession,
+    active_only: bool = True,
+) -> list[LeadStatusResponse]:
+    """Return the authenticated organization's lifecycle statuses."""
+
+    statuses = LeadStatusService(db).list_by_organization(
+        current_user.organization_id,
+        active_only=active_only,
+    )
+
+    return [
+        LeadStatusResponse.model_validate(status)
+        for status in statuses
+    ]
 
 
 @router.get(
