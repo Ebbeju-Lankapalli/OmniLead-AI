@@ -144,7 +144,7 @@ export const ProductsPage: React.FC = () => {
                     <td className="py-3.5 px-4 font-semibold text-slate-900">{p.name}</td>
                     <td className="py-3.5 px-4 text-slate-600 font-mono text-xs">{p.code || '—'}</td>
                     <td className="py-3.5 px-4 text-slate-600">{p.category || '—'}</td>
-                    <td className="py-3.5 px-4 font-bold text-slate-900">${(p.price ?? 0).toFixed(2)}</td>
+                    <td className="py-3.5 px-4 font-bold text-slate-900">${Number(p.price ?? 0).toFixed(2)}</td>
                     <td className="py-3.5 px-4">
                       {p.is_active ? (
                         <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold text-xs">

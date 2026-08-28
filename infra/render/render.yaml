@@ -1,0 +1,203 @@
+services:
+  - type: web
+    name: omnilead-ai-api
+    runtime: docker
+    plan: starter
+    region: singapore
+
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+
+    healthCheckPath: /health
+
+    autoDeployTrigger: commit
+
+    envVars:
+      - key: APP_NAME
+        value: OmniLead AI
+
+      - key: APP_ENV
+        value: production
+
+      - key: APP_DEBUG
+        value: "false"
+
+      - key: API_V1_PREFIX
+        value: /api/v1
+
+      - key: APP_TIMEZONE
+        value: Asia/Kolkata
+
+      - key: DEFAULT_CURRENCY
+        value: INR
+
+      - key: DEMO_MODE
+        value: "false"
+
+      - key: DATABASE_URL
+        sync: false
+
+      - key: SUPABASE_URL
+        sync: false
+
+      - key: SUPABASE_ANON_KEY
+        sync: false
+
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+
+      - key: SUPABASE_JWT_AUDIENCE
+        value: authenticated
+
+      - key: SUPABASE_CALL_RECORDINGS_BUCKET
+        value: call-recordings
+
+      - key: GEMINI_API_KEY
+        sync: false
+
+      - key: GEMINI_MODEL
+        sync: false
+
+      - key: AI_ENABLED
+        value: "true"
+
+      - key: AI_REQUEST_TIMEOUT_SECONDS
+        value: "30"
+
+      - key: LANGSMITH_TRACING
+        value: "false"
+
+      - key: LANGSMITH_API_KEY
+        sync: false
+
+      - key: LANGSMITH_PROJECT
+        value: omnilead-ai
+
+      - key: LANGSMITH_ENDPOINT
+        value: https://api.smith.langchain.com
+
+      - key: EMBEDDING_PROVIDER
+        value: sentence_transformers
+
+      - key: SENTENCE_TRANSFORMER_MODEL
+        sync: false
+
+      - key: SEMANTIC_SEARCH_ENABLED
+        value: "false"
+
+      - key: REDIS_URL
+        sync: false
+
+      - key: CELERY_BROKER_URL
+        sync: false
+
+      - key: CELERY_RESULT_BACKEND
+        sync: false
+
+      - key: CELERY_TASK_ALWAYS_EAGER
+        value: "false"
+
+      - key: EMAIL_NOTIFICATIONS_ENABLED
+        value: "false"
+
+      - key: RESEND_API_KEY
+        sync: false
+
+      - key: EMAIL_FROM_ADDRESS
+        sync: false
+
+      - key: EMAIL_FROM_NAME
+        value: OmniLead AI
+
+      - key: META_APP_ID
+        sync: false
+
+      - key: META_APP_SECRET
+        sync: false
+
+      - key: META_VERIFY_TOKEN
+        sync: false
+
+      - key: META_ORGANIZATION_ID
+        sync: false
+
+      - key: META_GRAPH_API_VERSION
+        sync: false
+
+      - key: INSTAGRAM_BUSINESS_ACCOUNT_ID
+        sync: false
+
+      - key: INSTAGRAM_ACCESS_TOKEN
+        sync: false
+
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+
+      - key: WHATSAPP_BUSINESS_ACCOUNT_ID
+        sync: false
+
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+
+      - key: META_WEBHOOK_ENABLED
+        value: "false"
+
+      - key: CALL_INTELLIGENCE_ENABLED
+        value: "false"
+
+      - key: WHISPER_MODEL_SIZE
+        value: small
+
+      - key: WHISPER_DEVICE
+        value: cpu
+
+      - key: WHISPER_COMPUTE_TYPE
+        value: int8
+
+      - key: MAX_AUDIO_FILE_SIZE_MB
+        value: "25"
+
+      - key: MAX_UPLOAD_SIZE_MB
+        value: "25"
+
+      - key: ALLOWED_AUDIO_EXTENSIONS
+        value: wav,mp3,m4a,flac,ogg,webm
+
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+      - key: TRUSTED_HOSTS
+        sync: false
+
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+
+      - key: RATE_LIMIT_REQUESTS
+        value: "100"
+
+      - key: RATE_LIMIT_WINDOW_SECONDS
+        value: "60"
+
+      - key: WEBHOOK_SIGNATURE_VALIDATION
+        value: "true"
+
+      - key: LOG_LEVEL
+        value: INFO
+
+      - key: LOG_FORMAT
+        value: json
+
+      - key: WEBSOCKET_ENABLED
+        value: "true"
+
+      - key: DEMO_ORGANIZATION_NAME
+        value: OmniLead Demo Company
+
+      - key: DEMO_ORGANIZATION_SLUG
+        value: omnilead-demo
+
+      - key: DEMO_ADMIN_EMAIL
+        value: demo@omnilead.local
+
+      - key: DEMO_SEED_ENABLED
+        value: "false"

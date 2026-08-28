@@ -134,7 +134,7 @@ class SearchRequest(ORMModel):
 class NaturalLanguageSearchRequest(ORMModel):
     """Convert a natural-language lead query into structured filters."""
 
-    organization_id: UUID
+    organization_id: UUID | None = None
     query: str = Field(min_length=1, max_length=2000)
 
     @field_validator("query")

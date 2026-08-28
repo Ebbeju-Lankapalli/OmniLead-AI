@@ -102,6 +102,11 @@ export const AddLeadPage: React.FC = () => {
         requirement: notes || undefined,
       };
 
+      console.log("===== CREATE LEAD DEBUG =====");
+      console.log("products:", products);
+      console.log("selected productId:", productId);
+      console.log("payload:", payload);
+
       return leadsApi.create(payload);
     },
     onSuccess: (lead) => {

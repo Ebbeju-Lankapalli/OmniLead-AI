@@ -256,8 +256,18 @@ export const AIReviewPage: React.FC = () => {
                     analysisId: editAnalysisId,
                     decision: AIReviewDecision.EDITED,
                     origResult: originalResult,
-                    finalResult: typeof parsed === 'object' ? parsed : { corrected_text: parsed },
-                    changedFields: typeof parsed === 'object' ? Object.keys(parsed) : ['corrected_text'],
+                    finalResult:
+  typeof parsed === 'object' && parsed !== null
+    ? parsed
+    : { corrected_text: parsed },
+changedFields:
+  typeof parsed === 'object' && parsed !== null
+    ? Object.keys(parsed).filter(
+        (key) =>
+          JSON.stringify(originalResult[key]) !==
+          JSON.stringify(parsed[key])
+      )
+    : ['corrected_text'],
                     notes: feedbackNotes,
                   });
                 }

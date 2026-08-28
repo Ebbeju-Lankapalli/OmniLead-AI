@@ -5,7 +5,7 @@ import { AppLayout } from '@/layouts/AppLayout';
 import { ProtectedRoute } from '@/components/common/ProtectedRoute';
 
 // Public Pages
-import { LandingPage } from '@/features/landing/LandingPage';
+import { LandingRoute } from '@/features/landing/LandingRoute';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { RegisterPage } from '@/features/auth/RegisterPage';
 import { NotFoundPage } from '@/features/auth/NotFoundPage';
@@ -36,7 +36,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: <PublicLayout />,
     children: [
-      { index: true, element: <LandingPage /> },
+      { index: true, element: <LandingRoute /> },
     ],
   },
   {

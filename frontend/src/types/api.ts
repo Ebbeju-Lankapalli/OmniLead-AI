@@ -606,16 +606,27 @@ export interface AIFeedbackResponse {
 /* Call Intelligence */
 export interface CallIntelligenceResponse {
   analysis_id: string;
+
   summary?: string | null;
+
   purchase_intent?: PurchaseIntent | null;
+
   sentiment?: string | null;
+
   requirement?: string | null;
+
   objections: string[];
+
   commitments: string[];
+
   action_items: string[];
+
   customer_questions: string[];
-  key_moments: Array<Record<string, any>>;
+
+  key_moments: string[];
+
   confidence?: number | null;
+
   requires_review: boolean;
 }
 

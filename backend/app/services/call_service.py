@@ -10,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import ConflictError, NotFoundError, ValidationError
+from app.models.ai_analysis import AIAnalysis
 from app.models.call_recording import CallRecording
 from app.repositories.customers import CustomerRepository
 from app.repositories.leads import LeadRepository
@@ -262,6 +263,34 @@ class CallService:
                 recording_metadata=metadata,
             ),
         )
+
+    def get_latest_intelligence(
+        self,
+        organization_id: UUID,
+        call_recording_id: UUID,
+    ) -> AIAnalysis | None:
+        """Return the latest completed CALL_ANALYSIS for a recording."""
+
+        statement = (
+            select(AIAnalysis)
+            .where(
+                AIAnalysis.organization_id
+                == organization_id,
+                AIAnalysis.call_recording_id
+                == call_recording_id,
+                AIAnalysis.analysis_type
+                == "CALL_ANALYSIS",
+                AIAnalysis.status
+                == "COMPLETED",
+            )
+            .order_by(
+                AIAnalysis.created_at.desc(),
+                AIAnalysis.id.desc(),
+            )
+            .limit(1)
+        )
+
+        return self.db.scalar(statement)
 
     def list_by_organization(
         self,

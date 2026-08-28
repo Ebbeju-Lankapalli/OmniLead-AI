@@ -300,7 +300,7 @@ export const LeadDetailPage: React.FC = () => {
             <ScoreBreakdownCard
               leadScore={lead.lead_score}
               priorityScore={lead.priority_score}
-              followupRisk={lead.followup_risk}
+              followupRiskScore={lead.followup_risk_score ?? lead.followup_risk}
               purchaseIntent={lead.purchase_intent}
               scoreBreakdown={lead.score_breakdown}
             />
@@ -401,7 +401,7 @@ export const LeadDetailPage: React.FC = () => {
           <ScoreBreakdownCard
             leadScore={lead.lead_score}
             priorityScore={lead.priority_score}
-            followupRisk={lead.followup_risk}
+            followupRiskScore={lead.followup_risk_score ?? lead.followup_risk}
             purchaseIntent={lead.purchase_intent}
             scoreBreakdown={lead.score_breakdown}
           />

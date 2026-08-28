@@ -13,18 +13,190 @@ from app.ai.providers.gemini import GeminiProvider
 from app.api.deps import CurrentUser, DatabaseSession
 from app.core.config import settings
 from app.core.exceptions import ValidationError
+from app.repositories.ai_analyses import AIAnalysisRepository
 from app.schemas.call import (
     CallIntelligenceResponse,
+    CallRecordingSummary,
     CallUploadProcessingResponse,
     CallUploadRequest,
 )
 from app.services.call_service import CallService
 from app.services.call_upload_service import CallUploadService
 
+
 router = APIRouter(
     prefix="/calls",
     tags=["calls"],
 )
+
+
+@router.get(
+    "",
+    response_model=list[CallRecordingSummary],
+)
+def list_call_recordings(
+    db: DatabaseSession,
+    current_user: CurrentUser,
+    customer_id: UUID | None = None,
+    lead_id: UUID | None = None,
+    status: str | None = None,
+    offset: int = 0,
+    limit: int = 100,
+) -> list[CallRecordingSummary]:
+    """
+    List organization-scoped call recordings
+    together with their persisted AI intelligence.
+    """
+
+    calls = CallService(db)
+    analyses = AIAnalysisRepository(db)
+
+    recordings = calls.list_by_organization(
+        current_user.organization_id,
+        customer_id=customer_id,
+        lead_id=lead_id,
+        status=status,
+        offset=offset,
+        limit=limit,
+    )
+
+    results: list[CallRecordingSummary] = []
+
+    for recording in recordings:
+        intelligence = None
+
+        # Find the latest CALL_ANALYSIS associated
+        # with this specific recording.
+        ai_results = analyses.list_by_organization(
+            current_user.organization_id,
+            call_recording_id=recording.id,
+            analysis_type="CALL_ANALYSIS",
+            limit=1,
+        )
+
+        if ai_results:
+            analysis = ai_results[0]
+
+            result = analysis.result or {}
+
+            confidence_value = result.get(
+                "confidence",
+                0,
+            )
+
+            if analysis.model_confidence is not None:
+                confidence_value = float(
+                    analysis.model_confidence
+                )
+            else:
+                try:
+                    confidence_value = float(
+                        confidence_value
+                    )
+                except (
+                    TypeError,
+                    ValueError,
+                ):
+                    confidence_value = 0.0
+
+            intelligence = CallIntelligenceResponse(
+                analysis_id=analysis.id,
+                summary=str(
+                    result.get(
+                        "summary",
+                        "",
+                    )
+                    or ""
+                ),
+                purchase_intent=(
+                    result.get(
+                        "purchase_intent"
+                    )
+                ),
+                sentiment=(
+                    result.get(
+                        "sentiment"
+                    )
+                ),
+                requirement=(
+                    result.get(
+                        "requirement"
+                    )
+                ),
+                objections=list(
+                    result.get(
+                        "objections",
+                        [],
+                    )
+                    or []
+                ),
+                commitments=list(
+                    result.get(
+                        "commitments",
+                        [],
+                    )
+                    or []
+                ),
+                action_items=list(
+                    result.get(
+                        "action_items",
+                        [],
+                    )
+                    or []
+                ),
+                customer_questions=list(
+                    result.get(
+                        "customer_questions",
+                        [],
+                    )
+                    or []
+                ),
+                key_moments=list(
+                    result.get(
+                        "key_moments",
+                        [],
+                    )
+                    or []
+                ),
+                confidence=max(
+                    0.0,
+                    min(
+                        1.0,
+                        confidence_value,
+                    ),
+                ),
+                requires_review=(
+                    analysis.status
+                    != "COMPLETED"
+                ),
+            )
+
+        results.append(
+            CallRecordingSummary(
+                id=recording.id,
+                customer_id=recording.customer_id,
+                lead_id=recording.lead_id,
+                conversation_id=recording.conversation_id,
+                original_filename=(
+                    recording.original_filename
+                ),
+                duration_seconds=(
+                    recording.duration_seconds
+                ),
+                transcription_status=(
+                    recording.transcription_status
+                ),
+                transcript=recording.transcript,
+                transcript_language=(
+                    recording.transcript_language
+                ),
+                recorded_at=recording.recorded_at,
+                uploaded_at=recording.uploaded_at,
+                intelligence=intelligence,
+            )
+        )
+
+    return results
 
 
 @router.post(
@@ -61,10 +233,11 @@ def upload_call_recording(
     ] = None,
 ) -> CallUploadProcessingResponse:
     """
-    Upload a call recording and process it through Whisper and Gemini.
+    Upload a call recording and process it through
+    Whisper and Gemini.
 
-    The authenticated user's organization is always used. Clients cannot
-    choose another organization ID.
+    The authenticated user's organization is always used.
+    Clients cannot choose another organization ID.
     """
 
     if not settings.CALL_INTELLIGENCE_ENABLED:
@@ -116,14 +289,18 @@ def upload_call_recording(
                 "metadata_json must contain valid JSON."
             ) from exc
 
-        if not isinstance(parsed_metadata, dict):
+        if not isinstance(
+            parsed_metadata,
+            dict,
+        ):
             raise ValidationError(
                 "metadata_json must contain a JSON object."
             )
 
         recording_metadata = parsed_metadata
 
-    # Validate organization-scoped customer/lead relationships early.
+    # Validate organization-scoped customer/lead
+    # relationships early.
     calls = CallService(db)
 
     customer = calls.customers.get(
@@ -167,7 +344,9 @@ def upload_call_recording(
 
     result = service.upload_and_process(
         CallUploadRequest(
-            organization_id=current_user.organization_id,
+            organization_id=(
+                current_user.organization_id
+            ),
             customer_id=customer_id,
             lead_id=lead_id,
             conversation_id=conversation_id,
@@ -192,22 +371,36 @@ def upload_call_recording(
     return CallUploadProcessingResponse(
         call_recording_id=recording.id,
         storage_path=result.storage_path,
-        transcription_status=recording.transcription_status,
-        transcript=recording.transcript or "",
-        transcript_language=recording.transcript_language,
-        duration_seconds=recording.duration_seconds,
+        transcription_status=(
+            recording.transcription_status
+        ),
+        transcript=(
+            recording.transcript or ""
+        ),
+        transcript_language=(
+            recording.transcript_language
+        ),
+        duration_seconds=(
+            recording.duration_seconds
+        ),
         intelligence=CallIntelligenceResponse(
             analysis_id=ai.analysis_id,
             summary=ai.summary,
-            purchase_intent=ai.purchase_intent,
+            purchase_intent=(
+                ai.purchase_intent
+            ),
             sentiment=ai.sentiment,
             requirement=ai.requirement,
             objections=ai.objections,
             commitments=ai.commitments,
             action_items=ai.action_items,
-            customer_questions=ai.customer_questions,
+            customer_questions=(
+                ai.customer_questions
+            ),
             key_moments=ai.key_moments,
             confidence=ai.confidence,
-            requires_review=ai.requires_review,
+            requires_review=(
+                ai.requires_review
+            ),
         ),
     )
