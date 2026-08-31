@@ -5,8 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from faster_whisper import WhisperModel
-
 from app.core.config import settings
 from app.core.exceptions import ConfigurationError, TranscriptionError
 
@@ -72,6 +70,8 @@ class FasterWhisperTranscriber:
             )
 
         try:
+            from faster_whisper import WhisperModel
+
             self.model = WhisperModel(
                 self.model_size,
                 device=self.device,
