@@ -143,7 +143,7 @@ dump.rdb
 *.ckpt
 *.safetensors
 
-models/
+/models/
 model-cache/
 
 # Hugging Face cache
